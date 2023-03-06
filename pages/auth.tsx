@@ -1,7 +1,11 @@
 import Input from "@/components/Input";
+import axios from "axios";
 import React, { useCallback, useState } from "react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/router";
 
 function auth() {
+  const router = useRouter();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -10,6 +14,34 @@ function auth() {
   const toggleVariant = useCallback(() => {
     setVariant((currentVariant) => (currentVariant === "login" ? "register" : "login"));
   }, []);
+
+  const login = useCallback(async () => {
+    try {
+      await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+        callbackUrl: "/",
+      });
+      router.push("/");
+    } catch (error) {
+      console.log(error);
+    }
+  }, [email, password, router]);
+
+  const register = useCallback(async () => {
+    try {
+      await axios.post("api/register", {
+        email,
+        username,
+        password,
+      });
+      login();
+    } catch (error) {
+      console.log(error);
+    }
+  }, [email, username, password, login]);
+
   return (
     <div className="w-full h-full relative bg-[url('/images/hero.jpg')] bg-no-repeat bg-center bg-cover">
       <div className="bg-black w-full h-full bg-opacity-50">
@@ -45,6 +77,7 @@ function auth() {
               />
             </div>
             <button
+              onClick={variant == "login" ? login : register}
               className="bg-red-600 py-3 mt-6 text-white rounded-md w-full 
             hover:bg-red-700"
             >
