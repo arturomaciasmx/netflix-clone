@@ -2,12 +2,10 @@ import Input from "@/components/Input";
 import axios from "axios";
 import React, { useCallback, useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/router";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 
 function auth() {
-  const router = useRouter();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,14 +20,12 @@ function auth() {
       await signIn("credentials", {
         email,
         password,
-        redirect: false,
-        callbackUrl: "/",
+        callbackUrl: "/profiles",
       });
-      router.push("/");
     } catch (error) {
       console.log(error);
     }
-  }, [email, password, router]);
+  }, [email, password]);
 
   const register = useCallback(async () => {
     try {
@@ -88,13 +84,13 @@ function auth() {
 
             <div className="flex mt-8 justify-center gap-4">
               <div
-                onClick={() => signIn("google", { callbackUrl: "/" })}
+                onClick={() => signIn("google", { callbackUrl: "/profiles" })}
                 className="bg-white w-10 h-10 rounded-full flex items-center justify-center hover:opacity-80 transition cursor-pointer"
               >
                 <FcGoogle size={30} />
               </div>
               <div
-                onClick={() => signIn("github", { callbackUrl: "/" })}
+                onClick={() => signIn("github", { callbackUrl: "/profiles" })}
                 className="bg-white w-10 h-10 rounded-full flex items-center justify-center hover:opacity-80 transition cursor-pointer"
               >
                 <FaGithub size={30} />
